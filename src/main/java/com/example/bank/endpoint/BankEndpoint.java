@@ -53,4 +53,12 @@ public class BankEndpoint {
     resp.setNewBalance(newBalance);
     return resp;
   }
+   @PayloadRoot(namespace = NAMESPACE_URI, localPart = "WidthDraw")
+  @ResponsePayload
+  public DepositResponse widthdraw(@RequestPayload DepositRequest request) {
+    BigDecimal newBalance = bankService.deposit(request.getAccountId(), request.getAmount());
+    DepositResponse resp = new DepositResponse();
+    resp.setNewBalance(newBalance);
+    return resp;
+  }
 }
