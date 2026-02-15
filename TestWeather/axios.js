@@ -27,3 +27,15 @@ function printWeather(city){
 }
 
 printWeather("Sousse");
+
+function RandomUser(){
+$.ajax({
+  url: 'https://randomuser.me/api/',
+  dataType: 'json',
+  success: function(data) {
+    console.log(data);
+  }
+});
+
+}
+RandomUser();
