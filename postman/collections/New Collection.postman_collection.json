@@ -1,0 +1,109 @@
+{
+  "info": {
+    "_postman_id": "289c0344-caac-4850-b10f-cb154b3ac53d",
+    "name": "Personne Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Personne",
+      "id": "d64c1c0f-4850-486f-9155-b876990d2b38",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/personnes",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "personnes"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Post Personne",
+      "id": "0e5b4546-4fff-442f-a0ed-746d685ece78",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nom\": \"mahdi\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/personnes",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "personnes"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Put Personne",
+      "id": "d4bfcdd8-f28e-400d-8581-51bd99c8c6ca",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": " {\r\n           \r\n            \"nom\": \"Khouloud\"\r\n        }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/personnes/6",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "personnes",
+            "6"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Personne",
+      "id": "e8d4e8c5-751f-4a18-ac05-69e856fcb910",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/personnes/6",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "personnes",
+            "6"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
