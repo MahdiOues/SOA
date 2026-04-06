@@ -1,0 +1,32 @@
+[
+  {
+    "id": "a6b59373-add3-45e5-bf66-ca4002bfda5c",
+    "name": "Ali Ben Ali",
+    "email": "alia@example.com",
+    "password": "123456"
+  },
+  {
+    "id": "c9985e80-d680-4e1e-a243-59d0c05e2cae",
+    "name": "Amira",
+    "email": "amira@example.com",
+    "password": "abc123"
+  },
+  {
+    "id": "a6e7949f-ff8f-4086-94a5-04e6d94ec550",
+    "name": "ea",
+    "email": "eaea@gmail.com",
+    "password": "12"
+  },
+  {
+    "id": "5ee76d9e-f633-44d4-af16-dfa4c8552968",
+    "name": "Mahdi Oueslati",
+    "email": "mahdioueslati@example.com",
+    "password": "654321"
+  },
+  {
+    "id": "e8d6d170-1346-4c4d-8c2e-8abe8228ebf8",
+    "name": "ea",
+    "email": "rzrz@gmail.com",
+    "password": "12"
+  }
+]

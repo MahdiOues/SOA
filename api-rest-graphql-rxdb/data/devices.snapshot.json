@@ -1,0 +1,18 @@
+[
+  {
+    "id": "8fa54b22-3c89-4400-bcb2-e97742d51bde",
+    "userId": "a6b59373-add3-45e5-bf66-ca4002bfda5c",
+    "name": "Iphone",
+    "type": "smartphone",
+    "serialNumber": "123456",
+    "status": "inactive"
+  },
+  {
+    "id": "3533501e-3fd4-42c5-93ab-95f02e945fd4",
+    "userId": "c9985e80-d680-4e1e-a243-59d0c05e2cae",
+    "name": "Dev1",
+    "type": "laptop",
+    "serialNumber": "125",
+    "status": "active"
+  }
+]
