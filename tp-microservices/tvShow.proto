@@ -1,28 +1,60 @@
 syntax = "proto3";
-package tvShow;
-// Définition du message TV show
-message TVShow {
-string id = 1;
-string title = 2;
-string description = 3;
-// Ajouter d'autres champs de données pour les séries TV au besoin
+package movie;
+
+message Movie {
+  string id = 1;
+  string title = 2;
+  string description = 3;
 }
-// Définition des messages de requête et de réponse pour les méthodes
-message GetTVShowRequest {
-string tv_show_id = 1;
+
+message GetMovieRequest {
+  string movie_id = 1;
 }
-message GetTVShowResponse {
-TVShow tv_show = 1;
+
+message GetMovieResponse {
+  Movie movie = 1;
 }
-message SearchTVShowsRequest {
-string query = 1;
+
+message SearchMoviesRequest {
+  string query = 1;
 }
-message SearchTVShowsResponse {
-repeated TVShow tv_shows = 1;
+
+message SearchMoviesResponse {
+  repeated Movie movies = 1;
 }
-// Définition du service de séries TV
-service TVShowService {
-rpc GetTvshow(GetTVShowRequest) returns (GetTVShowResponse);
-rpc SearchTvshows(SearchTVShowsRequest) returns (SearchTVShowsResponse);
-// Ajouter d'autres méthodes au besoin
+
+message CreateMovieRequest {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+}
+
+message CreateMovieResponse {
+  Movie movie = 1;
+}
+
+message UpdateMovieRequest {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+}
+
+message UpdateMovieResponse {
+  Movie movie = 1;
+}
+
+message DeleteMovieRequest {
+  string id = 1;
+}
+
+message DeleteMovieResponse {
+  string message = 1;
+}
+
+service MovieService {
+  rpc GetMovie(GetMovieRequest) returns (GetMovieResponse);
+  rpc SearchMovies(SearchMoviesRequest) returns (SearchMoviesResponse);
+  rpc CreateMovie(CreateMovieRequest) returns (CreateMovieResponse);
+  rpc UpdateMovie(UpdateMovieRequest) returns (UpdateMovieResponse);
+  rpc DeleteMovie(DeleteMovieRequest) returns (DeleteMovieResponse);
 }

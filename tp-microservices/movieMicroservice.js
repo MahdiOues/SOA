@@ -1,58 +1,124 @@
-// movieMicroservice.js
 const grpc = require('@grpc/grpc-js');
 const protoLoader = require('@grpc/proto-loader');
-// Charger le fichier movie.proto
+
 const movieProtoPath = 'movie.proto';
 const movieProtoDefinition = protoLoader.loadSync(movieProtoPath, {
-keepCase: true,
-longs: String,
-enums: String,
-defaults: true,
-oneofs: true,
+  keepCase: true,
+  longs: String,
+  enums: String,
+  defaults: true,
+  oneofs: true,
 });
+
 const movieProto = grpc.loadPackageDefinition(movieProtoDefinition).movie;
-// Implémenter le service movie
-const movieService = {
-getMovie: (call, callback) => {
-// Récupérer les détails du film à partir de la base de données
-const movie = {
-id: call.request.movie_id,
-title: 'Exemple de film',
-description: 'Ceci est un exemple de film.',
-// Ajouter d'autres champs de données pour le film au besoin
-};
-callback(null, { movie });
-},
-searchMovies: (call, callback) => {
-const { query } = call.request;
-// Effectuer une recherche de films en fonction de la requête
-const movies = [
-{
-id: '1',
-title: 'Exemple de film 1',
-description: 'Ceci est le premier exemple de film.',
-},
-{
-id: '2',
-title: 'Exemple de film 2',
-description: 'Ceci est le deuxième exemple de film.',
-},
-// Ajouter d'autres résultats de recherche de films au besoin
+
+// Base de données simulée
+let movies = [
+  {
+    id: '1',
+    title: 'Inception',
+    description: 'Un film de science-fiction.'
+  },
+  {
+    id: '2',
+    title: 'Interstellar',
+    description: 'Un film sur l’espace.'
+  }
 ];
-callback(null, { movies });
-},
-// Ajouter d'autres méthodes au besoin
+
+const movieService = {
+  getMovie: (call, callback) => {
+    const movie = movies.find(m => m.id === call.request.movie_id);
+
+    if (!movie) {
+      return callback({
+        code: grpc.status.NOT_FOUND,
+        details: 'Film non trouvé'
+      });
+    }
+
+    callback(null, { movie });
+  },
+
+  searchMovies: (call, callback) => {
+    const query = (call.request.query || '').toLowerCase();
+
+    if (!query) {
+      return callback(null, { movies });
+    }
+
+    const filteredMovies = movies.filter(m =>
+      m.title.toLowerCase().includes(query) ||
+      m.description.toLowerCase().includes(query)
+    );
+
+    callback(null, { movies: filteredMovies });
+  },
+
+  createMovie: (call, callback) => {
+    const { id, title, description } = call.request;
+
+    const existingMovie = movies.find(m => m.id === id);
+    if (existingMovie) {
+      return callback({
+        code: grpc.status.ALREADY_EXISTS,
+        details: 'Un film avec cet id existe déjà'
+      });
+    }
+
+    const newMovie = { id, title, description };
+    movies.push(newMovie);
+
+    callback(null, { movie: newMovie });
+  },
+
+  updateMovie: (call, callback) => {
+    const { id, title, description } = call.request;
+
+    const movieIndex = movies.findIndex(m => m.id === id);
+    if (movieIndex === -1) {
+      return callback({
+        code: grpc.status.NOT_FOUND,
+        details: 'Film non trouvé'
+      });
+    }
+
+    movies[movieIndex] = { id, title, description };
+
+    callback(null, { movie: movies[movieIndex] });
+  },
+
+  deleteMovie: (call, callback) => {
+    const { id } = call.request;
+
+    const movieIndex = movies.findIndex(m => m.id === id);
+    if (movieIndex === -1) {
+      return callback({
+        code: grpc.status.NOT_FOUND,
+        details: 'Film non trouvé'
+      });
+    }
+
+    movies.splice(movieIndex, 1);
+
+    callback(null, { message: 'Film supprimé avec succès' });
+  },
 };
-// Créer et démarrer le serveur gRPC
+
 const server = new grpc.Server();
 server.addService(movieProto.MovieService.service, movieService);
+
 const port = 50051;
-server.bindAsync(`0.0.0.0:${port}`, grpc.ServerCredentials.createInsecure(),
-(err, port) => {
-if (err) {
-console.error('Échec de la liaison du serveur:', err);
-return;
-}
-console.log(`Le serveur s'exécute sur le port ${port}`);
-});
+server.bindAsync(
+  `0.0.0.0:${port}`,
+  grpc.ServerCredentials.createInsecure(),
+  (err, port) => {
+    if (err) {
+      console.error('Échec de la liaison du serveur:', err);
+      return;
+    }
+    console.log(`Le serveur s'exécute sur le port ${port}`);
+  }
+);
+
 console.log(`Microservice de films en cours d'exécution sur le port ${port}`);
