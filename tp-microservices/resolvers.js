@@ -21,7 +21,7 @@ const tvShowProtoDefinition = protoLoader.loadSync(tvShowProtoPath, {
 });
 
 const movieProto = grpc.loadPackageDefinition(movieProtoDefinition).movie;
-const tvShowProto = grpc.loadPackageDefinition(tvShowProtoDefinition).tvShow;
+const tvShowProto = grpc.loadPackageDefinition(tvShowProtoDefinition).tvshow;
 
 const resolvers = {
   Query: {

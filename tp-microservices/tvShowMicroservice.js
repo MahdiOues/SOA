@@ -10,7 +10,7 @@ const tvShowProtoDefinition = protoLoader.loadSync(tvShowProtoPath, {
   oneofs: true,
 });
 
-const tvShowProto = grpc.loadPackageDefinition(tvShowProtoDefinition).tvShow;
+const tvShowProto = grpc.loadPackageDefinition(tvShowProtoDefinition).tvshow;
 
 // Base de données simulée
 let tvShows = [

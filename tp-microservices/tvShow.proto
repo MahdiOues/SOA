@@ -1,60 +1,60 @@
 syntax = "proto3";
-package movie;
+package tvshow;
 
-message Movie {
+message TVShow {
   string id = 1;
   string title = 2;
   string description = 3;
 }
 
-message GetMovieRequest {
-  string movie_id = 1;
+message GetTVShowRequest {
+  string tv_show_id = 1;
 }
 
-message GetMovieResponse {
-  Movie movie = 1;
+message GetTVShowResponse {
+  TVShow tv_show = 1;
 }
 
-message SearchMoviesRequest {
+message SearchTVShowsRequest {
   string query = 1;
 }
 
-message SearchMoviesResponse {
-  repeated Movie movies = 1;
+message SearchTVShowsResponse {
+  repeated TVShow tv_shows = 1;
 }
 
-message CreateMovieRequest {
+message CreateTVShowRequest {
   string id = 1;
   string title = 2;
   string description = 3;
 }
 
-message CreateMovieResponse {
-  Movie movie = 1;
+message CreateTVShowResponse {
+  TVShow tv_show = 1;
 }
 
-message UpdateMovieRequest {
+message UpdateTVShowRequest {
   string id = 1;
   string title = 2;
   string description = 3;
 }
 
-message UpdateMovieResponse {
-  Movie movie = 1;
+message UpdateTVShowResponse {
+  TVShow tv_show = 1;
 }
 
-message DeleteMovieRequest {
+message DeleteTVShowRequest {
   string id = 1;
 }
 
-message DeleteMovieResponse {
+message DeleteTVShowResponse {
   string message = 1;
 }
 
-service MovieService {
-  rpc GetMovie(GetMovieRequest) returns (GetMovieResponse);
-  rpc SearchMovies(SearchMoviesRequest) returns (SearchMoviesResponse);
-  rpc CreateMovie(CreateMovieRequest) returns (CreateMovieResponse);
-  rpc UpdateMovie(UpdateMovieRequest) returns (UpdateMovieResponse);
-  rpc DeleteMovie(DeleteMovieRequest) returns (DeleteMovieResponse);
+service TVShowService {
+  rpc GetTvshow(GetTVShowRequest) returns (GetTVShowResponse);
+  rpc SearchTvshows(SearchTVShowsRequest) returns (SearchTVShowsResponse);
+  rpc CreateTvshow(CreateTVShowRequest) returns (CreateTVShowResponse);
+  rpc UpdateTvshow(UpdateTVShowRequest) returns (UpdateTVShowResponse);
+  rpc DeleteTvshow(DeleteTVShowRequest) returns (DeleteTVShowResponse);
 }

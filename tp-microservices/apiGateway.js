@@ -13,6 +13,9 @@ const typeDefs = fs.readFileSync('./schema.gql', 'utf8');
 
 const app = express();
 
+app.use(cors());
+app.use(express.json());
+
 const movieProtoDefinition = protoLoader.loadSync(movieProtoPath, {
   keepCase: true,
   longs: String,
@@ -29,158 +32,165 @@ const tvShowProtoDefinition = protoLoader.loadSync(tvShowProtoPath, {
   oneofs: true,
 });
 
+// Load Movie proto
 const movieProto = grpc.loadPackageDefinition(movieProtoDefinition).movie;
-const tvShowProto = grpc.loadPackageDefinition(tvShowProtoDefinition).tvShow;
+
+// Load TV Show proto safely
+const loadedTvProto = grpc.loadPackageDefinition(tvShowProtoDefinition);
+console.log('Loaded TV proto:', loadedTvProto);
+
+const tvShowProto = grpc.loadPackageDefinition(tvShowProtoDefinition).tvshow;
+console.log('tvShowProto:', tvShowProto);
 
 const server = new ApolloServer({ typeDefs, resolvers });
 
-app.use(cors());
-app.use(express.json());
+async function startServer() {
+  await server.start();
 
-server.start().then(() => {
   app.use('/graphql', expressMiddleware(server));
-});
 
-// ---------------- MOVIES REST ----------------
+  // ---------------- MOVIES ----------------
 
-app.get('/movies', (req, res) => {
-  const client = new movieProto.MovieService(
-    'localhost:50051',
-    grpc.credentials.createInsecure()
-  );
+  app.get('/movies', (req, res) => {
+    const client = new movieProto.MovieService(
+      'localhost:50051',
+      grpc.credentials.createInsecure()
+    );
 
-  client.searchMovies({ query: '' }, (err, response) => {
-    if (err) res.status(500).send(err);
-    else res.json(response.movies);
+    client.searchMovies({ query: '' }, (err, response) => {
+      if (err) return res.status(500).json(err);
+      res.json(response.movies);
+    });
   });
-});
 
-app.get('/movies/:id', (req, res) => {
-  const client = new movieProto.MovieService(
-    'localhost:50051',
-    grpc.credentials.createInsecure()
-  );
+  app.get('/movies/:id', (req, res) => {
+    const client = new movieProto.MovieService(
+      'localhost:50051',
+      grpc.credentials.createInsecure()
+    );
 
-  client.getMovie({ movie_id: req.params.id }, (err, response) => {
-    if (err) res.status(500).send(err);
-    else res.json(response.movie);
+    client.getMovie({ movie_id: req.params.id }, (err, response) => {
+      if (err) return res.status(500).json(err);
+      res.json(response.movie);
+    });
   });
-});
 
-app.post('/movies', (req, res) => {
-  const client = new movieProto.MovieService(
-    'localhost:50051',
-    grpc.credentials.createInsecure()
-  );
+  app.post('/movies', (req, res) => {
+    const client = new movieProto.MovieService(
+      'localhost:50051',
+      grpc.credentials.createInsecure()
+    );
 
-  const { id, title, description } = req.body;
+    const { id, title, description } = req.body;
 
-  client.createMovie({ id, title, description }, (err, response) => {
-    if (err) res.status(500).send(err);
-    else res.json(response.movie);
+    client.createMovie({ id, title, description }, (err, response) => {
+      if (err) return res.status(500).json(err);
+      res.json(response.movie);
+    });
   });
-});
 
-app.put('/movies/:id', (req, res) => {
-  const client = new movieProto.MovieService(
-    'localhost:50051',
-    grpc.credentials.createInsecure()
-  );
+  app.put('/movies/:id', (req, res) => {
+    const client = new movieProto.MovieService(
+      'localhost:50051',
+      grpc.credentials.createInsecure()
+    );
 
-  const { title, description } = req.body;
+    const { title, description } = req.body;
 
-  client.updateMovie(
-    { id: req.params.id, title, description },
-    (err, response) => {
-      if (err) res.status(500).send(err);
-      else res.json(response.movie);
-    }
-  );
-});
-
-app.delete('/movies/:id', (req, res) => {
-  const client = new movieProto.MovieService(
-    'localhost:50051',
-    grpc.credentials.createInsecure()
-  );
-
-  client.deleteMovie({ id: req.params.id }, (err, response) => {
-    if (err) res.status(500).send(err);
-    else res.json(response);
+    client.updateMovie(
+      { id: req.params.id, title, description },
+      (err, response) => {
+        if (err) return res.status(500).json(err);
+        res.json(response.movie);
+      }
+    );
   });
-});
 
-// ---------------- TV SHOWS REST ----------------
+  app.delete('/movies/:id', (req, res) => {
+    const client = new movieProto.MovieService(
+      'localhost:50051',
+      grpc.credentials.createInsecure()
+    );
 
-app.get('/tvshows', (req, res) => {
-  const client = new tvShowProto.TVShowService(
-    'localhost:50052',
-    grpc.credentials.createInsecure()
-  );
-
-  client.searchTvshows({ query: '' }, (err, response) => {
-    if (err) res.status(500).send(err);
-    else res.json(response.tv_shows);
+    client.deleteMovie({ id: req.params.id }, (err, response) => {
+      if (err) return res.status(500).json(err);
+      res.json(response);
+    });
   });
-});
 
-app.get('/tvshows/:id', (req, res) => {
-  const client = new tvShowProto.TVShowService(
-    'localhost:50052',
-    grpc.credentials.createInsecure()
-  );
+  // ---------------- TV SHOWS ----------------
 
-  client.getTvshow({ tv_show_id: req.params.id }, (err, response) => {
-    if (err) res.status(500).send(err);
-    else res.json(response.tv_show);
+  app.get('/tvshows', (req, res) => {
+    const client = new tvShowProto.TVShowService(
+      'localhost:50052',
+      grpc.credentials.createInsecure()
+    );
+
+    client.searchTvshows({ query: '' }, (err, response) => {
+      if (err) return res.status(500).json(err);
+      res.json(response.tv_shows);
+    });
   });
-});
 
-app.post('/tvshows', (req, res) => {
-  const client = new tvShowProto.TVShowService(
-    'localhost:50052',
-    grpc.credentials.createInsecure()
-  );
+  app.get('/tvshows/:id', (req, res) => {
+    const client = new tvShowProto.TVShowService(
+      'localhost:50052',
+      grpc.credentials.createInsecure()
+    );
 
-  const { id, title, description } = req.body;
-
-  client.createTvshow({ id, title, description }, (err, response) => {
-    if (err) res.status(500).send(err);
-    else res.json(response.tv_show);
+    client.getTvshow({ tv_show_id: req.params.id }, (err, response) => {
+      if (err) return res.status(500).json(err);
+      res.json(response.tv_show);
+    });
   });
-});
 
-app.put('/tvshows/:id', (req, res) => {
-  const client = new tvShowProto.TVShowService(
-    'localhost:50052',
-    grpc.credentials.createInsecure()
-  );
+  app.post('/tvshows', (req, res) => {
+    const client = new tvShowProto.TVShowService(
+      'localhost:50052',
+      grpc.credentials.createInsecure()
+    );
 
-  const { title, description } = req.body;
+    const { id, title, description } = req.body;
 
-  client.updateTvshow(
-    { id: req.params.id, title, description },
-    (err, response) => {
-      if (err) res.status(500).send(err);
-      else res.json(response.tv_show);
-    }
-  );
-});
-
-app.delete('/tvshows/:id', (req, res) => {
-  const client = new tvShowProto.TVShowService(
-    'localhost:50052',
-    grpc.credentials.createInsecure()
-  );
-
-  client.deleteTvshow({ id: req.params.id }, (err, response) => {
-    if (err) res.status(500).send(err);
-    else res.json(response);
+    client.createTvshow({ id, title, description }, (err, response) => {
+      if (err) return res.status(500).json(err);
+      res.json(response.tv_show);
+    });
   });
-});
 
-// Démarrer l'application
-const port = 3000;
-app.listen(port, () => {
-  console.log(`API Gateway en cours d'exécution sur le port ${port}`);
-});
+  app.put('/tvshows/:id', (req, res) => {
+    const client = new tvShowProto.TVShowService(
+      'localhost:50052',
+      grpc.credentials.createInsecure()
+    );
+
+    const { title, description } = req.body;
+
+    client.updateTvshow(
+      { id: req.params.id, title, description },
+      (err, response) => {
+        if (err) return res.status(500).json(err);
+        res.json(response.tv_show);
+      }
+    );
+  });
+
+  app.delete('/tvshows/:id', (req, res) => {
+    const client = new tvShowProto.TVShowService(
+      'localhost:50052',
+      grpc.credentials.createInsecure()
+    );
+
+    client.deleteTvshow({ id: req.params.id }, (err, response) => {
+      if (err) return res.status(500).json(err);
+      res.json(response);
+    });
+  });
+
+  const port = 3000;
+  app.listen(port, () => {
+    console.log(`API Gateway en cours d'exécution sur le port ${port}`);
+  });
+}
+
+startServer();
